@@ -28,12 +28,12 @@
 				"properties": {
 					"simplicite.url": {
 						"type": "string",
-						"default": "https://demo.dev.simplicite.io",
+						"default": "http://localhost:8080",
 						"description": "Instance URL."
 					},
 					"simplicite.username": {
 						"type": "string",
-						"default": "website",
+						"default": "designer",
 						"description": "Username."
 					},
 					"simplicite.password": {
