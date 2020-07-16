@@ -1,5 +1,5 @@
 {
-	"name": "simplicite-vscode-tools",
+	"name": "simplicite",
 	"displayName": "simplicite-vscode-tools",
 	"description": "Simplicite low code platform tools for VSCode",
 	"publisher": "simplicitesoftware",
@@ -20,6 +20,28 @@
 			{
 				"command": "simplicite.info",
 				"title": "Simplicite: info"
+			}
+		],
+		"configuration": [
+			{
+				"title": "Instance URL and credentials",
+				"properties": {
+					"simplicite.url": {
+						"type": "string",
+						"default": "https://demo.dev.simplicite.io",
+						"description": "Instance URL."
+					},
+					"simplicite.username": {
+						"type": "string",
+						"default": "website",
+						"description": "Username."
+					},
+					"simplicite.password": {
+						"type": "string",
+						"default": "simplicite",
+						"description": "Password."
+					}
+				}
 			}
 		]
 	},
