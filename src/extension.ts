@@ -9,13 +9,19 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let app = Simplicite.session({ url: url, username: username, password: cfg.get("password") });
 
-	let disposable = vscode.commands.registerCommand('simplicite.info', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('simplicite.appinfo', () => {
 		app.getAppInfo().then((info: any) => {
+			console.log(JSON.stringify(info));
 			vscode.window.showInformationMessage(`${info.title} ${info.platformversion} (${url})`);
 		});
-	});
+	}));
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(vscode.commands.registerCommand('simplicite.sysinfo', () => {
+		app.getSysInfo().then((info: any) => {
+			console.log(JSON.stringify(info));
+			vscode.window.showInformationMessage(`Object cache: ${info.cacheobject} / ${info.cacheobjectmax}. Process cache: ${info.cacheprocess} / ${info.cacheprocessmax}, Grant cache: ${info.cachegrant} / ${info.cachegrantmax}`);
+		});
+	}));
 }
 
 export function deactivate() {

@@ -4,6 +4,8 @@
 	"description": "Simplicite low code platform tools for VSCode",
 	"publisher": "simplicitesoftware",
 	"repository": "https://github.com/simplicitesoftware/vscode-tools",
+	"license": "Apache-2.0",
+	"icon": "https://docs.simplicite.io/logos/touch/icon256.png",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.47.0"
@@ -12,14 +14,19 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:simplicite.info"
+		"onCommand:simplicite.appinfo",
+		"onCommand:simplicite.sysinfo"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "simplicite.info",
-				"title": "Simplicite: info"
+				"command": "simplicite.appinfo",
+				"title": "Simplicite: application information"
+			},
+			{
+				"command": "simplicite.sysinfo",
+				"title": "Simplicite: system information"
 			}
 		],
 		"configuration": [
