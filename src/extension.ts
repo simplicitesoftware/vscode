@@ -1,15 +1,20 @@
 import * as vscode from 'vscode';
+import * as Simplicite from 'simplicite';
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('simplicite-tools activated');
+	console.log('Simplicite tools activated');
 
-	let disposable = vscode.commands.registerCommand('simplicite-tools.version', () => {
-		vscode.window.showInformationMessage('Simplicite tools version 0.0.1');
+	let app = Simplicite.session({ url: 'https://demo.dev.simplicite.io', username: 'website', password: 'simplicite' });
+
+	let disposable = vscode.commands.registerCommand('simplicite.info', () => {
+		app.getAppInfo().then((info: any) => {
+			vscode.window.showInformationMessage(info.title + ' ' + info.platformversion);
+		});
 	});
 
 	context.subscriptions.push(disposable);
 }
 
 export function deactivate() {
-	console.log('simplicite-tools deactivated');
+	console.log('Simplicite tools deactivated');
 }
