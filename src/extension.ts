@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log(`Simplicite tools activated for URL ${url} and username ${username}`);
 
-	let app: any = Simplicite.session({ url: url, username: username, password: cfg.get("password"), debug: false });
+	const app: any = Simplicite.session({ url: url, username: username, password: cfg.get("password"), debug: false });
 	const mdl: any = app.getBusinessObject('Module');
 	const obj: any= app.getBusinessObject('ObjectInternal');
 
@@ -28,18 +28,18 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	}));
 
-	const fs: SimpliciteFS = new SimpliciteFS();
+	const fs: SimpliciteFS = new SimpliciteFS(app);
 
 	context.subscriptions.push(vscode.workspace.registerFileSystemProvider('simplicite', fs, { isCaseSensitive: true }));
 
 	function refreshModules() {
 		app.debug(modules);
-		let mf: string = '\'Demo\''; // TODO: use modules configuration
+		let mf: string = '\'Application\''; // TODO: use modules configuration
 		mdl.search({ mdl_name: `in (${mf})` }).then((ms: any) => {
 			app.debug(JSON.stringify(ms));
 			for (let i: number = 0; i < ms.length; i++) {
 				const m: any = ms[i];
-				const uri: string = `simplicite:/${m.mdl_name}/`;
+				const uri: string = `simplicite:/${m.mdl_name}`;
 				fs.createDirectory(vscode.Uri.parse(uri));
 				fs.createDirectory(vscode.Uri.parse(`${uri}/src`));
 				fs.writeFile(vscode.Uri.parse(`${uri}/README.md`), Buffer.from(m.mdl_comment || ''), { create: true, overwrite: true });
@@ -56,7 +56,9 @@ export function activate(context: vscode.ExtensionContext) {
 				console.log(JSON.stringify(o));
 				const d: any = o.obo_script_id;
 				if (d) {
-					fs.writeFile(vscode.Uri.parse(`${mdlUri}/src/${d.name}`), Buffer.from(d.content, 'base64'), { create: true, overwrite: true });
+					let uri: vscode.Uri = vscode.Uri.parse(`${mdlUri}/src/${d.name}`);
+					fs.writeFile(uri, Buffer.from(d.content, 'base64'), { create: true, overwrite: true });
+					fs.setRecord(uri.path, obj.getName(), 'obo_script_id', o.row_id);
 				}
 			}
 		});

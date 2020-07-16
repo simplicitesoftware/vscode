@@ -23,6 +23,22 @@ export class File implements vscode.FileStat {
 }
 
 /**
+ * Virtual file record
+ * @class
+ */
+export class FileRecord {
+	obj: string;
+	fld: string;
+	rowId: number;
+
+	constructor(obj: string, fld: string, rowId: number) {
+		this.obj = obj;
+		this.fld = fld;
+		this.rowId = rowId;
+	}
+}
+
+/**
  * Virtual directory
  * @class
  */
@@ -55,6 +71,12 @@ export type Entry = File | Directory;
  * @class
  */
 export class SimpliciteFS implements vscode.FileSystemProvider {
+	private _app: any;
+
+	constructor(app: any) {
+		this._app = app;
+	}
+
 	root = new Directory('');
 
 	/**
@@ -134,13 +156,55 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 		entry.size = content.byteLength;
 		entry.data = content;
 
-		this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
+		const record: FileRecord|undefined = this.getRecord(uri.path);
+		if (record) {
+			const obj: any = this._app.getBusinessObject(record.obj);
+			obj.getForUpdate(record.rowId, { inlineDocuments: [ record.fld ] }).then((item: any) => {
+				item[record.fld].content =  Buffer.from(content).toString('base64');
+				obj.update(item).then(() => {
+					this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
+				});
+			});
+		} else {
+			this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
+		}
 	}
 
+	private _records: Map<string, FileRecord> = new Map<string, FileRecord>();
+
+	/**
+	 * Set file record
+	 * @param uri File URI
+	 * @param obj Object name
+	 * @param fld Field name
+	 * @param rowId Row ID
+	 */
+	setRecord(uri: string, obj: string, fld: string, rowId: number) : void{
+		this._records.set(uri, new FileRecord(obj, fld, rowId));
+	}
+
+	/**
+	 * Get file record
+	 * @param uri File URI
+	 */
+	getRecord(uri: string): FileRecord|undefined {
+		return this._records.get(uri);
+	}
+
+	/**
+	 * Delete file <strong>NOT AVAILABLE</strong>
+	 * @param uri File URI
+	 * @param options Options
+	 */
 	delete(uri: vscode.Uri, options: { recursive: boolean; }): void | Thenable<void> {
 		throw new Error("delete: method not available.");
 	}
 
+	/**
+	 * Rename file <strong>NOT AVAILABLE</strong>
+	 * @param uri File URI
+	 * @param options Options
+	 */
 	rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean; }): void | Thenable<void> {
 		throw new Error("rename: method not available.");
 	}
