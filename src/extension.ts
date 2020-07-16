@@ -37,12 +37,13 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('simplicite.refresh', () => {
-		mdl.search({}).then((modules: any) => {
+		mdl.search({ mdl_name: 'not in (\'System\', \'Interface\')' }).then((modules: any) => {
 			app.debug(JSON.stringify(modules));
 			for (let i = 0; i < modules.length; i++) {
 				const module = modules[i];
-				console.log(module.mdl_name);
-				fs.createDirectory(vscode.Uri.parse(`simplicite:/${module.mdl_name}/`));
+				const moduleURI = `simplicite:/${module.mdl_name}/`;
+				fs.createDirectory(vscode.Uri.parse(moduleURI));
+				fs.writeFile(vscode.Uri.parse(`${moduleURI}/README.md`), Buffer.from(module.mdl_comment || ''), { create: true, overwrite: true });
 			}
 		});
 	}));

@@ -59,7 +59,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 
 	/**
 	 * Stat
-	 * @param uri URI
+	 * @param uri Entry URI
 	 */
 	stat(uri: vscode.Uri): vscode.FileStat | Thenable<vscode.FileStat> {
 		return this._lookup(uri, false);
@@ -67,7 +67,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 
 	/**
 	 * Create directory
-	 * @param uri URI
+	 * @param uri Directory URI
 	 */
 	createDirectory(uri: vscode.Uri): void | Thenable<void> {
 		const basename = path.posix.basename(uri.path);
@@ -83,7 +83,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 
 	/**
 	 * Read directory
-	 * @param uri URI
+	 * @param uri Directory URI
 	 */
 	readDirectory(uri: vscode.Uri): [string, vscode.FileType][] | Thenable<[string, vscode.FileType][]> {
 		const entry = this._lookupAsDirectory(uri, false);
@@ -94,12 +94,47 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 		return result;
 	}
 
+	/**
+	 * Read file
+	 * @param uri File URI
+	 */
 	readFile(uri: vscode.Uri): Uint8Array | Thenable<Uint8Array> {
-		throw new Error("readFile: method not implemented yet.");
+		const data = this._lookupAsFile(uri, false).data;
+		if (data) {
+			return data;
+		}
+		throw vscode.FileSystemError.FileNotFound(uri);
 	}
 
+	/**
+	 * Write file
+	 * @param uri File URI
+	 * @param content File content
+	 * @param options Options
+	 */
 	writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }): void | Thenable<void> {
-		throw new Error("writeFile: method not implemented yet.");
+		const basename = path.posix.basename(uri.path);
+		const parent = this._lookupParentDirectory(uri);
+		let entry = parent.entries.get(basename);
+		if (entry instanceof Directory) {
+			throw vscode.FileSystemError.FileIsADirectory(uri);
+		}
+		if (!entry && !options.create) {
+			throw vscode.FileSystemError.FileNotFound(uri);
+		}
+		if (entry && options.create && !options.overwrite) {
+			throw vscode.FileSystemError.FileExists(uri);
+		}
+		if (!entry) {
+			entry = new File(basename);
+			parent.entries.set(basename, entry);
+			this._fireSoon({ type: vscode.FileChangeType.Created, uri });
+		}
+		entry.mtime = Date.now();
+		entry.size = content.byteLength;
+		entry.data = content;
+
+		this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
 	}
 
 	delete(uri: vscode.Uri, options: { recursive: boolean; }): void | Thenable<void> {
