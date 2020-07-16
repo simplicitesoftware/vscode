@@ -20,7 +20,7 @@
 		"onCommand:simplicite.appinfo",
 		"onCommand:simplicite.sysinfo",
 		"onFileSystem:simplicite",
-		"onCommand:simplicite.initWorkspace",
+		"onCommand:simplicite.init",
 		"onCommand:simplicite.refresh"
 	],
 	"main": "./out/extension.js",
@@ -37,7 +37,7 @@
 				"category": "Simplicite"
 			},
 			{
-				"command": "simplicite.initWorkspace",
+				"command": "simplicite.init",
 				"title": "Init workspace",
 				"category": "Simplicite"
 			},
@@ -50,7 +50,7 @@
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "simplicite.initWorkspace",
+					"command": "simplicite.init",
 					"when": "workbenchState != workspace"
 				},
 				{
@@ -77,6 +77,11 @@
 						"type": "string",
 						"default": "simplicite",
 						"description": "Password."
+					},
+					"simplicite.modules": {
+						"type": "array",
+						"default": [ "Application" ],
+						"description": "Modules."
 					}
 				}
 			}
