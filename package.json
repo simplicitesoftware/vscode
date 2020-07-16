@@ -3,7 +3,10 @@
 	"displayName": "simplicite-vscode-tools",
 	"description": "Simplicite low code platform tools for VSCode",
 	"publisher": "simplicitesoftware",
-	"repository": "https://github.com/simplicitesoftware/vscode-tools",
+	"repository": {
+		"url": "https://github.com/simplicitesoftware/vscode-tools",
+		"type": "git"
+	},
 	"license": "Apache-2.0",
 	"icon": "https://docs.simplicite.io/logos/touch/icon256.png",
 	"version": "0.0.1",
@@ -15,20 +18,47 @@
 	],
 	"activationEvents": [
 		"onCommand:simplicite.appinfo",
-		"onCommand:simplicite.sysinfo"
+		"onCommand:simplicite.sysinfo",
+		"onFileSystem:simplicite",
+		"onCommand:simplicite.initWorkspace",
+		"onCommand:simplicite.refresh"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "simplicite.appinfo",
-				"title": "Simplicite: application information"
+				"title": "Application information",
+				"category": "Simplicite"
 			},
 			{
 				"command": "simplicite.sysinfo",
-				"title": "Simplicite: system information"
+				"title": "System information",
+				"category": "Simplicite"
+			},
+			{
+				"command": "simplicite.initWorkspace",
+				"title": "Init workspace",
+				"category": "Simplicite"
+			},
+			{
+				"command": "simplicite.refresh",
+				"title": "Refresh workspace",
+				"category": "Simplicite"
 			}
 		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "simplicite.initWorkspace",
+					"when": "workbenchState != workspace"
+				},
+				{
+					"command": "simplicite.refresh",
+					"when": "workbenchState == workspace"
+				}
+			]
+		},
 		"configuration": [
 			{
 				"title": "Instance URL and credentials",
