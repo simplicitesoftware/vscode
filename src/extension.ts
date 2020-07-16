@@ -4,13 +4,13 @@ import { SimpliciteFS } from './SimpliciteFS';
 
 export function activate(context: vscode.ExtensionContext) {
 	let cfg: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('simplicite');
-	let url: string|undefined = cfg.get("url");
-	let username: string|undefined = cfg.get("username");
+	let url: string|undefined = cfg.get('url');
+	let username: string|undefined = cfg.get('username');
 	let modules: string[]|undefined = cfg.get('modules');
 
 	console.log(`Simplicite tools activated for URL ${url} and username ${username}`);
 
-	const app: any = Simplicite.session({ url: url, username: username, password: cfg.get("password"), debug: false });
+	const app: any = Simplicite.session({ url: url, username: username, password: cfg.get('password'), debug: false });
 	const mdl: any = app.getBusinessObject('Module');
 	const obj: any= app.getBusinessObject('ObjectInternal');
 

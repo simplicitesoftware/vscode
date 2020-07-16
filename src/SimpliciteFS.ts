@@ -197,7 +197,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 	 * @param options Options
 	 */
 	delete(uri: vscode.Uri, options: { recursive: boolean; }): void | Thenable<void> {
-		throw new Error("delete: method not available.");
+		throw new Error('delete: method not available.');
 	}
 
 	/**
@@ -206,7 +206,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 	 * @param options Options
 	 */
 	rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean; }): void | Thenable<void> {
-		throw new Error("rename: method not available.");
+		throw new Error('rename: method not available.');
 	}
 
 	private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
