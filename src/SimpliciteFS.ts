@@ -92,6 +92,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 	 * @param uri Directory URI
 	 */
 	createDirectory(uri: vscode.Uri): void | Thenable<void> {
+		console.log('Create directory: ' + uri.path);
 		const basename = path.posix.basename(uri.path);
 		const dirname = uri.with({ path: path.posix.dirname(uri.path) });
 		const parent = this._lookupAsDirectory(dirname, false);
@@ -108,6 +109,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 	 * @param uri Directory URI
 	 */
 	readDirectory(uri: vscode.Uri): [string, vscode.FileType][] | Thenable<[string, vscode.FileType][]> {
+		console.log('Read directory: ' + uri.path);
 		const entry = this._lookupAsDirectory(uri, false);
 		const result: [string, vscode.FileType][] = [];
 		for (const [name, child] of entry.entries) {
@@ -121,6 +123,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 	 * @param uri File URI
 	 */
 	readFile(uri: vscode.Uri): Uint8Array | Thenable<Uint8Array> {
+		console.log('Read file: ' + uri.path);
 		const data = this._lookupAsFile(uri, false).data;
 		if (data) {
 			return data;
@@ -135,6 +138,7 @@ export class SimpliciteFS implements vscode.FileSystemProvider {
 	 * @param options Options
 	 */
 	writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }): void | Thenable<void> {
+		console.log('Write file: ' + uri.path);
 		const basename = path.posix.basename(uri.path);
 		const parent = this._lookupParentDirectory(uri);
 		let entry = parent.entries.get(basename);
