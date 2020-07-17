@@ -53,11 +53,6 @@ export function activate(context: vscode.ExtensionContext) {
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.wst.common.project.facet.core.builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>
@@ -71,7 +66,6 @@ export function activate(context: vscode.ExtensionContext) {
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
-		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
 </projectDescription>`), { create: true, overwrite: true });
 				fs.writeFile(vscode.Uri.parse(`${uri}/.classpath`), Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
