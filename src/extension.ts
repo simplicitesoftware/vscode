@@ -74,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
 </projectDescription>`), { create: true, overwrite: true });
-					fs.writeFile(vscode.Uri.parse(`${uri}/.classpath`), Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+				fs.writeFile(vscode.Uri.parse(`${uri}/.classpath`), Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src">
 		<attributes>
