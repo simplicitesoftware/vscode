@@ -41,9 +41,66 @@ export function activate(context: vscode.ExtensionContext) {
 			app.debug(JSON.stringify(ms));
 			for (let i: number = 0; i < ms.length; i++) {
 				const m: any = ms[i];
-				//const uri: string = `simplicite:/${m.mdl_name}`;
+				const name: string = m.mdl_name;
+				//const uri: string = `simplicite:/${name}`;
 				//fs.createDirectory(vscode.Uri.parse(uri));
 				const uri: string = `simplicite:`;
+				fs.writeFile(vscode.Uri.parse(`${uri}/.project`), Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>${name}</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.wst.common.project.facet.core.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+	</natures>
+</projectDescription>`), { create: true, overwrite: true });
+					fs.writeFile(vscode.Uri.parse(`${uri}/.classpath`), Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="test/src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>`), { create: true, overwrite: true });
 				fs.createDirectory(vscode.Uri.parse(`${uri}/src`));
 				fs.createDirectory(vscode.Uri.parse(`${uri}/src/com`));
 				fs.createDirectory(vscode.Uri.parse(`${uri}/src/com/simplicite`));
@@ -51,11 +108,13 @@ export function activate(context: vscode.ExtensionContext) {
 				fs.createDirectory(vscode.Uri.parse(`${uri}/test`));
 				fs.createDirectory(vscode.Uri.parse(`${uri}/test/src`));
 				fs.createDirectory(vscode.Uri.parse(`${uri}/test/resources`));
-				fs.writeFile(vscode.Uri.parse(`${uri}/README.md`), Buffer.from(m.mdl_comment || ''), { create: true, overwrite: true });
 				mdl.print('Module-MavenModule', m.row_id).then((pom: string) => {
 					app.debug(pom);
 					fs.writeFile(vscode.Uri.parse(`${uri}/pom.xml`), Buffer.from(pom), { create: true, overwrite: true });
-					refreshBusinessObjects(m.row_id, m.mdl_name, uri);
+					mdl.print('Module-MD', m.row_id).then((md: string) => {
+						fs.writeFile(vscode.Uri.parse(`${uri}/README.md`), Buffer.from(md || ''), { create: true, overwrite: true });
+						refreshBusinessObjects(m.row_id, name, uri);
+					});
 				});
 			}
 		});
